@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Services\InvoiceService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 
 use Illuminate\Support\Facades\Hash;
 
@@ -14,6 +15,7 @@ class InvoiceManager extends Component
 {
     use WithPagination;
 
+    #[Url(as: 'status')]
     public string $filterStatus = '';
     public string $search = '';
 

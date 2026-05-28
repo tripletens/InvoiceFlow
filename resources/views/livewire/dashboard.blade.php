@@ -20,21 +20,21 @@
                 $currencySymbol = $symbols[$userCurrency] ?? $userCurrency . ' ';
 
                 $statCards = [
-                    ['label' => 'Total Invoiced', 'value' => \App\Helpers\CurrencyHelper::format($stats['total_invoiced'], $userCurrency), 'icon' => '💰', 'color' => 'border-cyan-500/20 bg-cyan-500/5'],
-                    ['label' => 'Paid Revenue', 'value' => \App\Helpers\CurrencyHelper::format($stats['paid'], $userCurrency), 'icon' => '✅', 'color' => 'border-teal-500/20 bg-teal-500/5'],
-                    ['label' => 'Total Expenses', 'value' => \App\Helpers\CurrencyHelper::format($totalExpenses, $userCurrency), 'icon' => '💸', 'color' => 'border-rose-500/20 bg-rose-500/5'],
-                    ['label' => 'Net Profit', 'value' => ($netProfit < 0 ? '-' : '') . \App\Helpers\CurrencyHelper::format(abs($netProfit), $userCurrency), 'icon' => '📈', 'color' => $netProfit >= 0 ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-red-500/20 bg-red-500/5'],
-                    ['label' => 'Overdue Invoices', 'value' => $stats['overdue'], 'icon' => '⚠️', 'color' => 'border-orange-500/20 bg-orange-500/5'],
+                    ['label' => 'Total Invoiced', 'value' => \App\Helpers\CurrencyHelper::format($stats['total_invoiced'], $userCurrency), 'icon' => '💰', 'color' => 'border-cyan-500/20 bg-cyan-500/5 hover:border-cyan-500/50', 'url' => route('invoices.index')],
+                    ['label' => 'Paid Revenue', 'value' => \App\Helpers\CurrencyHelper::format($stats['paid'], $userCurrency), 'icon' => '✅', 'color' => 'border-teal-500/20 bg-teal-500/5 hover:border-teal-500/50', 'url' => route('invoices.index') . '?status=paid'],
+                    ['label' => 'Total Expenses', 'value' => \App\Helpers\CurrencyHelper::format($totalExpenses, $userCurrency), 'icon' => '💸', 'color' => 'border-rose-500/20 bg-rose-500/5 hover:border-rose-500/50', 'url' => route('expenses.index')],
+                    ['label' => 'Net Profit', 'value' => ($netProfit < 0 ? '-' : '') . \App\Helpers\CurrencyHelper::format(abs($netProfit), $userCurrency), 'icon' => '📈', 'color' => ($netProfit >= 0 ? 'border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/50' : 'border-red-500/20 bg-red-500/5 hover:border-red-500/50'), 'url' => route('invoices.index')],
+                    ['label' => 'Overdue Invoices', 'value' => $stats['overdue'], 'icon' => '⚠️', 'color' => 'border-orange-500/20 bg-orange-500/5 hover:border-orange-500/50', 'url' => route('invoices.index') . '?status=overdue'],
                 ];
             @endphp
             @foreach($statCards as $card)
-            <div class="rounded-2xl border {{ $card['color'] }} p-5 flex items-center gap-3">
+            <a href="{{ $card['url'] }}" wire:navigate class="rounded-2xl border {{ $card['color'] }} p-5 flex items-center gap-3 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
                 <span class="text-2xl">{{ $card['icon'] }}</span>
                 <div>
                     <p class="text-[10px] text-slate-400 uppercase tracking-wide font-bold">{{ $card['label'] }}</p>
                     <p class="text-xl font-black text-white mt-0.5">{{ $card['value'] }}</p>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
 
