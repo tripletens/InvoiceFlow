@@ -16,11 +16,20 @@ class BusinessManager extends Component
     public string $phone = '';
     public string $address = '';
 
+    public string $bank_name = '';
+    public string $account_name = '';
+    public string $account_number = '';
+    public string $routing_number = '';
+
     protected array $rules = [
         'name'    => 'required|string|max:255',
         'email'   => 'nullable|email|max:255',
         'phone'   => 'nullable|string|max:255',
         'address' => 'nullable|string|max:500',
+        'bank_name' => 'nullable|string|max:255',
+        'account_name' => 'nullable|string|max:255',
+        'account_number' => 'nullable|string|max:255',
+        'routing_number' => 'nullable|string|max:255',
     ];
 
     public function openCreate()
@@ -31,7 +40,7 @@ class BusinessManager extends Component
             return;
         }
 
-        $this->reset(['name', 'email', 'phone', 'address', 'editing', 'editingId']);
+        $this->reset(['name', 'email', 'phone', 'address', 'bank_name', 'account_name', 'account_number', 'routing_number', 'editing', 'editingId']);
         $this->isCreating = true;
     }
 
@@ -43,6 +52,10 @@ class BusinessManager extends Component
         $this->email = $business->email ?? '';
         $this->phone = $business->phone ?? '';
         $this->address = $business->address ?? '';
+        $this->bank_name = $business->bank_name ?? '';
+        $this->account_name = $business->account_name ?? '';
+        $this->account_number = $business->account_number ?? '';
+        $this->routing_number = $business->routing_number ?? '';
         $this->editing = true;
         $this->isCreating = true;
     }
@@ -50,7 +63,7 @@ class BusinessManager extends Component
     public function cancelCreate()
     {
         $this->isCreating = false;
-        $this->reset(['name', 'email', 'phone', 'address', 'editing', 'editingId']);
+        $this->reset(['name', 'email', 'phone', 'address', 'bank_name', 'account_name', 'account_number', 'routing_number', 'editing', 'editingId']);
     }
 
     public function save()
@@ -64,6 +77,10 @@ class BusinessManager extends Component
                 'email'   => $this->email,
                 'phone'   => $this->phone,
                 'address' => $this->address,
+                'bank_name' => $this->bank_name,
+                'account_name' => $this->account_name,
+                'account_number' => $this->account_number,
+                'routing_number' => $this->routing_number,
             ]);
 
             session()->flash('success', 'Business profile updated successfully!');
@@ -80,6 +97,10 @@ class BusinessManager extends Component
                 'email'   => $this->email,
                 'phone'   => $this->phone,
                 'address' => $this->address,
+                'bank_name' => $this->bank_name,
+                'account_name' => $this->account_name,
+                'account_number' => $this->account_number,
+                'routing_number' => $this->routing_number,
             ]);
 
             session()->flash('success', 'Business profile created successfully!');
@@ -87,7 +108,7 @@ class BusinessManager extends Component
         }
 
         $this->isCreating = false;
-        $this->reset(['name', 'email', 'phone', 'address', 'editing', 'editingId']);
+        $this->reset(['name', 'email', 'phone', 'address', 'bank_name', 'account_name', 'account_number', 'routing_number', 'editing', 'editingId']);
     }
 
     public function deleteBusiness(int $id)

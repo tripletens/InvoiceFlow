@@ -41,7 +41,7 @@ class SubscriptionManager extends Component
         $this->confirmPinInput = '';
     }
 
-    public function verifyAndSubscribe(PaymentService $paymentService)
+    public function verifyAndSubscribe()
     {
         if (!$this->confirmingPlanId) {
             return;
@@ -54,15 +54,16 @@ class SubscriptionManager extends Component
 
         $this->confirmingSubscription = false;
         
-        $this->subscribe($this->confirmingPlanId, $paymentService);
+        $this->subscribe($this->confirmingPlanId);
     }
 
-    public function subscribe(string $planId, PaymentService $paymentService)
+    public function subscribe(string $planId)
     {
-        if ($planId === 'starter') {
-            // Cancel active subscriptions to downgrade to starter (free)
+        $paymentService = app(PaymentService::class);
+        if ($planId === 'free') {
+            // Cancel active subscriptions to downgrade to free
             auth()->user()->subscriptions()->where('status', 'active')->update(['status' => 'canceled']);
-            session()->flash('success', 'You have successfully downgraded to the Free Starter plan.');
+            session()->flash('success', 'You have successfully downgraded to the Free plan.');
             $this->redirect(route('dashboard'), navigate: true);
             return;
         }
@@ -71,9 +72,10 @@ class SubscriptionManager extends Component
         
         if ($gateway->getName() === 'paystack') {
             $amountInKobo = match($planId) {
+                'starter' => 900000,   // 9,000 NGN ($9/mo)
                 'pro' => 1900000,    // 19,000 NGN ($19/mo)
                 'agency' => 5900000, // 59,000 NGN ($59/mo)
-                default => 1900000
+                default => 900000
             };
 
             $this->dispatch('trigger-paystack', [
@@ -92,8 +94,9 @@ class SubscriptionManager extends Component
         $this->redirect(route('dashboard'), navigate: true);
     }
 
-    public function verifyPayment(string $reference, string $planId, PaymentService $paymentService)
+    public function verifyPayment(string $reference, string $planId)
     {
+        $paymentService = app(PaymentService::class);
         $gateway = $paymentService->getActiveGateway();
         
         try {

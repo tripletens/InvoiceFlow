@@ -79,7 +79,10 @@ class PortalDashboard extends Component
         $paid = $invoices->where('status', 'paid')->sum('total');
         $totalInvoicesCount = $invoices->count();
 
-        return view('livewire.client-portal.portal-dashboard', compact('invoices', 'outstanding', 'paid', 'totalInvoicesCount'))
+        // Get the business issuing the invoices to show bank details
+        $business = $invoices->first()?->business ?? $this->client->user->businesses->first();
+
+        return view('livewire.client-portal.portal-dashboard', compact('invoices', 'outstanding', 'paid', 'totalInvoicesCount', 'business'))
             ->layout('layouts.client', ['title' => 'Client Portal — ' . ($this->client->company ?? $this->client->name)]);
     }
 }

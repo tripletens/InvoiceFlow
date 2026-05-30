@@ -28,8 +28,8 @@ class InvoiceDesigner extends Component
     protected array $rules = [
         'primaryColor'  => 'required|string',
         'accentColor'   => 'required|string',
-        'fontFamily'    => 'required|string|in:Inter,Roboto,Outfit,Lora,Courier Prime',
-        'templateStyle' => 'required|string|in:modern,classic,minimalist',
+        'fontFamily'    => 'required|string|in:Inter,Roboto,Outfit,Lora,Courier Prime,Montserrat,Open Sans,Poppins,Playfair Display,Merriweather,Space Mono,Fira Code,Oswald,Raleway,Lato,Nunito,Ubuntu,Source Serif Pro,Inconsolata,Dancing Script',
+        'templateStyle' => 'required|string|in:modern,classic,minimalist,corporate,bold,elegant,tech,studio,monospace,geometric,agency,vintage,high_contrast,pastel,brutalist,compact,neon,newspaper,retail,executive',
         'showTax'       => 'required|boolean',
         'showQty'       => 'required|boolean',
         'showNotes'     => 'required|boolean',

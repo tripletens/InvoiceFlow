@@ -8,7 +8,7 @@
     <meta name="description" content="InvoiceFlow - Simple, powerful invoicing for modern businesses." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@400;500;700;900&family=Roboto:wght@400;500;700;900&family=Lora:wght@400;500;700;900&family=Courier+Prime:wght@400;700&family=Montserrat:wght@400;700;900&family=Open+Sans:wght@400;700;900&family=Poppins:wght@400;700;900&family=Playfair+Display:wght@400;700;900&family=Merriweather:wght@400;700;900&family=Space+Mono:wght@400;700&family=Fira+Code:wght@400;700&family=Oswald:wght@400;700;900&family=Raleway:wght@400;700;900&family=Lato:wght@400;700;900&family=Nunito:wght@400;700;900&family=Ubuntu:wght@400;700;900&family=Source+Serif+Pro:wght@400;700;900&family=Inconsolata:wght@400;700;900&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -167,5 +167,6 @@
         });
     });
 </script>
+<x-cookie-consent />
 </body>
 </html>

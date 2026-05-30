@@ -8,7 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>body { font-family: 'Outfit', sans-serif; }</style>
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        /* Fade‑in‑up animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+    </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
 
@@ -95,12 +103,13 @@
             <h2 class="text-3xl sm:text-4xl font-black text-white mb-4">Simple, honest pricing</h2>
             <p class="text-slate-400">No hidden fees. Cancel any time.</p>
         </div>
-        <div class="grid md:grid-cols-3 gap-6">
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
             @php
             $plans = [
-                ['name'=>'Starter','price'=>'$9','period'=>'/mo','desc'=>'For freelancers just getting started.','features'=>['Up to 10 invoices/mo','1 Business profile','Client directory','PDF downloads'],'highlighted'=>false,'color'=>'border-slate-700'],
-                ['name'=>'Pro','price'=>'$29','period'=>'/mo','desc'=>'For growing agencies and founders.','features'=>['Unlimited invoices','3 Business profiles','Developer API access','Automated reminders','Priority support'],'highlighted'=>true,'color'=>'border-cyan-500'],
-                ['name'=>'Agency','price'=>'$79','period'=>'/mo','desc'=>'For large teams and enterprises.','features'=>['Unlimited everything','10+ Business profiles','Full API access','Custom branding','Dedicated support'],'highlighted'=>false,'color'=>'border-slate-700'],
+                ['name'=>'Free','price'=>'$0','period'=>'/mo','desc'=>'For freelancers just getting started.','features'=>['Up to 3 invoices/mo','1 Business profile','Client directory','PDF downloads'],'highlighted'=>false,'color'=>'border-slate-700'],
+                ['name'=>'Starter','price'=>'$9','period'=>'/mo','desc'=>'For active freelancers and solopreneurs.','features'=>['Up to 25 invoices/mo','1 Business profile','Bank Transfer Details','Basic Income vs Expense','Standard email support'],'highlighted'=>false,'color'=>'border-slate-700'],
+                ['name'=>'Pro','price'=>'$19','period'=>'/mo','desc'=>'For growing agencies and founders.','features'=>['Unlimited invoices','3 Business profiles','Developer API access','Automated reminders','Priority support'],'highlighted'=>true,'color'=>'border-cyan-500'],
+                ['name'=>'Agency','price'=>'$59','period'=>'/mo','desc'=>'For large teams and enterprises.','features'=>['Unlimited everything','Unlimited Business profiles','Full API access','Custom branding','Dedicated support'],'highlighted'=>false,'color'=>'border-slate-700'],
             ];
             @endphp
             @foreach($plans as $plan)
@@ -163,11 +172,11 @@
         </div>
     </section>
 
-    {{-- Footer --}}
     <footer class="border-t border-slate-900 py-8 text-center text-xs text-slate-600">
-        &copy; {{ date('Y') }} InvoiceFlow. Built with Laravel &amp; Livewire. All rights reserved.
+        &copy; 2026 FlowLedger. Built with ❤️ for Businesses. All rights reserved.
     </footer>
 
     <script src="//unpkg.com/alpinejs" defer></script>
+    <x-cookie-consent />
 </body>
 </html>

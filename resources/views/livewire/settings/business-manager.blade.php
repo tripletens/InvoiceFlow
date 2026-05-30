@@ -52,6 +52,12 @@
                         <p class="text-sm text-slate-400 whitespace-pre-wrap">{{ $business->address }}</p>
                     </div>
                     @endif
+                    @if($business->bank_name || $business->account_number)
+                    <div class="mt-4 pt-4 border-t border-slate-800/60">
+                        <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Bank Details</p>
+                        <p class="text-sm text-slate-400">{{ $business->bank_name }} &middot; Acct: {{ $business->account_number }}</p>
+                    </div>
+                    @endif
                 </div>
             </div>
             @empty
@@ -95,6 +101,33 @@
                         <label class="block text-sm font-medium text-slate-300 mb-1">Address</label>
                         <textarea wire:model="address" rows="3" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/40"></textarea>
                         @error('address') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800">
+                        <h3 class="text-sm font-bold text-slate-300 mb-3">Bank Transfer Details</h3>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Bank Name</label>
+                                <input wire:model="bank_name" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/40" placeholder="e.g. Chase Bank" />
+                                @error('bank_name') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Account Name</label>
+                                <input wire:model="account_name" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/40" />
+                                @error('account_name') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Account Number</label>
+                                <input wire:model="account_number" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/40" />
+                                @error('account_number') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Routing Number / Sort Code</label>
+                                <input wire:model="routing_number" type="text" class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500/40" />
+                                @error('routing_number') <span class="text-red-400 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500">These details will be displayed on your invoices so clients know where to send payments.</p>
                     </div>
 
                 </div>

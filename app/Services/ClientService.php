@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Client;
 use App\Repositories\Contracts\ClientRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use App\Events\ClientCreated;
 
 /**
  * ClientService
@@ -32,7 +33,11 @@ class ClientService
     public function createClient(int $userId, array $data): Client
     {
         $data['user_id'] = $userId;
-        return $this->clientRepository->create($data);
+        $client = $this->clientRepository->create($data);
+        
+        ClientCreated::dispatch($client);
+        
+        return $client;
     }
 
     /**

@@ -7,6 +7,12 @@ use App\Repositories\Contracts\InvoiceRepositoryInterface;
 use App\Repositories\Eloquent\ClientRepository;
 use App\Repositories\Eloquent\InvoiceRepository;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Event;
+use App\Events\InvoiceCreated;
+use App\Events\InvoicePaid;
+use App\Events\InvoiceOverdue;
+use App\Events\ClientCreated;
+use App\Listeners\DispatchWebhooks;
 
 /**
  * AppServiceProvider
@@ -26,6 +32,12 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Event::listen([
+            InvoiceCreated::class,
+            InvoicePaid::class,
+            InvoiceOverdue::class,
+            ClientCreated::class,
+        ], DispatchWebhooks::class);
         \Livewire\Livewire::listen('component.dehydrate', function ($component) {
             \Log::info('Livewire dehydrate hook ran for component: ' . get_class($component) . ' | success: ' . (session()->has('success') ? 'yes (' . session('success') . ')' : 'no') . ' | error: ' . (session()->has('error') ? 'yes (' . session('error') . ')' : 'no'));
             

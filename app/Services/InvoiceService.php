@@ -7,6 +7,9 @@ use App\Models\InvoiceItem;
 use App\Repositories\Contracts\InvoiceRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use App\Events\InvoiceCreated;
+use App\Events\InvoicePaid;
+use App\Events\InvoiceOverdue;
 
 /**
  * InvoiceService
@@ -69,7 +72,11 @@ class InvoiceService
             ]);
         }
 
-        return $invoice->load('items');
+        $invoice->load('items', 'client');
+        
+        InvoiceCreated::dispatch($invoice);
+
+        return $invoice;
     }
 
     /**
@@ -82,7 +89,15 @@ class InvoiceService
         $allowedStatuses = ['draft', 'sent', 'viewed', 'paid', 'overdue'];
         abort_unless(in_array($status, $allowedStatuses), 422, 'Invalid status.');
 
-        return $this->invoiceRepository->updateStatus($invoice, $status);
+        $updatedInvoice = $this->invoiceRepository->updateStatus($invoice, $status);
+
+        if ($status === 'paid') {
+            InvoicePaid::dispatch($updatedInvoice);
+        } elseif ($status === 'overdue') {
+            InvoiceOverdue::dispatch($updatedInvoice);
+        }
+
+        return $updatedInvoice;
     }
 
     /**

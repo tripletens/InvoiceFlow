@@ -37,7 +37,15 @@
                             <p class="text-3xl font-black text-teal-400">${{ number_format($paid, 2) }}</p>
                         </div>
                         <div class="text-xs text-slate-500 pt-2 leading-relaxed border-t border-slate-800">
-                            Please contact your account manager for bank wire details or payments options.
+                            @if($business && ($business->bank_name || $business->account_number))
+                                <p class="font-bold text-slate-400 mb-1">Bank Transfer Details:</p>
+                                @if($business->bank_name)<p>Bank: <span class="text-slate-300 font-semibold">{{ $business->bank_name }}</span></p>@endif
+                                @if($business->account_name)<p>Account Name: <span class="text-slate-300 font-semibold">{{ $business->account_name }}</span></p>@endif
+                                @if($business->account_number)<p>Account Number: <span class="text-slate-300 font-semibold">{{ $business->account_number }}</span></p>@endif
+                                @if($business->routing_number)<p>Routing/Sort Code: <span class="text-slate-300 font-semibold">{{ $business->routing_number }}</span></p>@endif
+                            @else
+                                Please contact your account manager for bank wire details or payments options.
+                            @endif
                         </div>
                     </div>
 

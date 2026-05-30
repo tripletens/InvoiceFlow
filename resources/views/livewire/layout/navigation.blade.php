@@ -16,7 +16,7 @@ new class extends Component
     }
 }; ?>
 
-<nav class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
+<nav x-data="{ mobileMenuOpen: false }" class="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
 
@@ -40,10 +40,10 @@ new class extends Component
                     Invoices
                 </a>
                 <a href="{{ route('recurring-invoices.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('recurring-invoices.*') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }} transition-all">
-                    🔄 Recurring
+                    Recurring
                 </a>
                 <a href="{{ route('expenses.index') }}" class="px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('expenses.*') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }} transition-all">
-                    💸 Expenses
+                    Expenses
                 </a>
                 <a href="{{ route('invoices.create') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-cyan-400 hover:text-cyan-300 hover:bg-slate-800/60 transition-all">
                     + New Invoice
@@ -65,7 +65,7 @@ new class extends Component
                         </a>
                         <a href="{{ route('settings.reminders') }}" class="flex items-center gap-3 px-4 py-3 text-sm {{ request()->routeIs('settings.reminders') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }} transition-all">
                             ⏰ <span>Reminders</span>
-                            @if(auth()->user()?->currentPlan() === 'starter')
+                            @if(in_array(auth()->user()?->currentPlan(), ['free', 'starter']))
                             <span class="ml-auto text-xs font-bold text-violet-400">Pro</span>
                             @endif
                         </a>
@@ -77,14 +77,14 @@ new class extends Component
                         </a>
                         <a href="{{ route('settings.designer') }}" class="flex items-center gap-3 px-4 py-3 text-sm {{ request()->routeIs('settings.designer') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }} transition-all">
                             🖌️ <span>Invoice Designer</span>
-                            @if(auth()->user()?->currentPlan() === 'starter')
+                            @if(in_array(auth()->user()?->currentPlan(), ['free', 'starter']))
                             <span class="ml-auto text-xs font-bold text-violet-400">Pro</span>
                             @endif
                         </a>
                         <div class="border-t border-slate-800"></div>
                         <a href="{{ route('settings.api') }}" class="flex items-center gap-3 px-4 py-3 text-sm {{ request()->routeIs('settings.api') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }} transition-all">
                             🔑 <span>API Keys</span>
-                            @if(auth()->user()?->currentPlan() === 'starter')
+                            @if(in_array(auth()->user()?->currentPlan(), ['free', 'starter']))
                             <span class="ml-auto text-xs font-bold text-violet-400">Pro</span>
                             @endif
                         </a>
@@ -101,7 +101,7 @@ new class extends Component
             {{-- User Menu --}}
             <div class="flex items-center gap-3">
                 @if(auth()->user()?->onTrial() && !auth()->user()?->hasActiveSubscription() && !auth()->user()?->is_admin)
-                    <div class="flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full">
                         <span class="text-xs font-semibold text-amber-500">
                             ⏳ {{ auth()->user()->daysLeftOnTrial() }} days left
                         </span>
@@ -110,16 +110,64 @@ new class extends Component
                         </a>
                     </div>
                 @endif
-                <div class="text-right hidden sm:block">
-                    <p class="text-sm font-semibold text-slate-200">{{ auth()->user()?->name }}</p>
-                    <p class="text-xs text-slate-500">{{ auth()->user()?->email }}</p>
+                <div class="hidden lg:flex items-center gap-3">
+                    <div class="text-right">
+                        <p class="text-sm font-semibold text-slate-200">{{ auth()->user()?->name }}</p>
+                        <p class="text-xs text-slate-500">{{ auth()->user()?->email }}</p>
+                    </div>
+                    <a href="{{ route('profile') }}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/50 text-sm text-slate-300 transition-all">
+                        Profile
+                    </a>
+                    <button wire:click="logout" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/50 text-sm text-slate-300 transition-all">
+                        Logout
+                    </button>
                 </div>
-                <a href="{{ route('profile') }}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/50 text-sm text-slate-300 transition-all">
-                    Profile
-                </a>
-                <button wire:click="logout" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/50 text-sm text-slate-300 transition-all">
-                    Logout
-                </button>
+
+                <!-- Hamburger Button -->
+                <div class="-mr-2 flex items-center lg:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="inline-flex items-center justify-center p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path :class="{'hidden': mobileMenuOpen, 'inline-flex': !mobileMenuOpen }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path :class="{'hidden': !mobileMenuOpen, 'inline-flex': mobileMenuOpen }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div x-show="mobileMenuOpen" x-collapse class="lg:hidden border-t border-slate-800 bg-slate-900 overflow-y-auto max-h-[80vh]">
+        <div class="px-2 pt-2 pb-3 space-y-1">
+            <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('dashboard') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">Dashboard</a>
+            <a href="{{ route('clients.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('clients.*') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">Clients</a>
+            <a href="{{ route('invoices.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('invoices.*') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">Invoices</a>
+            <a href="{{ route('recurring-invoices.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('recurring-invoices.*') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">Recurring</a>
+            <a href="{{ route('expenses.index') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ request()->routeIs('expenses.*') ? 'bg-slate-800 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/60' }}">Expenses</a>
+            <a href="{{ route('invoices.create') }}" class="block px-3 py-2 rounded-md text-base font-medium text-cyan-400 hover:text-cyan-300 hover:bg-slate-800/60">+ New Invoice</a>
+
+            <div class="mt-4 mb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Settings</div>
+            <a href="{{ route('settings.businesses') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">🏢 Businesses</a>
+            <a href="{{ route('settings.categories') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">🏷️ Expense Categories</a>
+            <a href="{{ route('settings.reminders') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">⏰ Reminders</a>
+            <a href="{{ route('settings.branding') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">🎨 Branding</a>
+            <a href="{{ route('settings.designer') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">🖌️ Invoice Designer</a>
+            <a href="{{ route('settings.api') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">🔑 API Keys</a>
+
+            @if(auth()->user()?->is_admin)
+            <div class="mt-4 mb-2 px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Admin</div>
+            <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-violet-400 hover:text-violet-300 hover:bg-slate-800/60">Admin Dashboard</a>
+            @endif
+        </div>
+        
+        <div class="pt-4 pb-3 border-t border-slate-800">
+            <div class="px-4 mb-3">
+                <p class="text-base font-medium text-white">{{ auth()->user()?->name }}</p>
+                <p class="text-sm font-medium text-slate-500">{{ auth()->user()?->email }}</p>
+            </div>
+            <div class="space-y-1 px-2">
+                <a href="{{ route('profile') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">Profile</a>
+                <button wire:click="logout" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-400 hover:text-white hover:bg-slate-800">Logout</button>
             </div>
         </div>
     </div>

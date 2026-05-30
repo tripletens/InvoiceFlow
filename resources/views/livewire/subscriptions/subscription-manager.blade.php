@@ -23,9 +23,10 @@
             $activeSub = auth()->user()->subscriptions()->where('status', 'active')->first();
             $subPlan = $activeSub ? $activeSub->plan_id : null;
             $planLevels = [
-                'starter' => 1,
-                'pro' => 2,
-                'agency' => 3,
+                'free' => 1,
+                'starter' => 2,
+                'pro' => 3,
+                'agency' => 4,
             ];
             $effectivePlan = auth()->user()->currentPlan();
             $currentLevel = $planLevels[$effectivePlan] ?? 1;
@@ -36,7 +37,7 @@
                 <p class="text-indigo-400 font-bold text-base flex items-center justify-center gap-2">
                     <span>✨</span> Your 14-day free trial has ended!
                 </p>
-                <p class="text-indigo-400/80 text-sm mt-1">You are currently on the Free Starter plan. Upgrade to Pro or Agency to unlock automated reminders, API access, and custom branding.</p>
+                <p class="text-indigo-400/80 text-sm mt-1">You are currently on the Free plan. Upgrade to Pro or Agency to unlock automated reminders, API access, and custom branding.</p>
             </div>
         @endif
 
@@ -45,11 +46,11 @@
             <p class="text-slate-400">No hidden fees. Cancel or downgrade at any time.</p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-6">
+        <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
             
-            {{-- Starter Plan --}}
+            {{-- Free Plan --}}
             <div class="relative rounded-2xl border border-slate-700 bg-slate-900 p-8 flex flex-col">
-                <h3 class="text-xl font-black text-white">Starter</h3>
+                <h3 class="text-xl font-black text-white">Free</h3>
                 <div class="mt-3 mb-1">
                     <span class="text-4xl font-black text-white">$0</span>
                     <span class="text-slate-400 text-sm">/mo</span>
@@ -69,11 +70,43 @@
                     @endforeach
                 </ul>
 
-                @if($subPlan === 'starter' || ($subPlan === null && !auth()->user()->onTrial() && !auth()->user()->is_admin))
+                @if($subPlan === 'free' || ($subPlan === null && !auth()->user()->onTrial() && !auth()->user()->is_admin))
+                    <button disabled class="w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-500 font-semibold text-sm cursor-not-allowed">Current Plan</button>
+                @else
+                    <button wire:click="confirmSubscription('free')" class="w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 hover:opacity-90 font-semibold text-sm transition-all">
+                        {{ $currentLevel > 1 ? 'Downgrade to Free' : 'Subscribe to Free' }}
+                    </button>
+                @endif
+            </div>
+
+            {{-- Starter Plan --}}
+            <div class="relative rounded-2xl border border-slate-700 bg-slate-900 p-8 flex flex-col">
+                <h3 class="text-xl font-black text-white">Starter</h3>
+                <div class="mt-3 mb-1">
+                    <span class="text-4xl font-black text-white">$9</span>
+                    <span class="text-slate-400 text-sm">/mo</span>
+                </div>
+                <p class="text-slate-400 text-sm mb-6">For active freelancers and solopreneurs.</p>
+                
+                <ul class="space-y-2 flex-1 mb-8">
+                    @foreach([
+                        'Up to 25 invoices/mo',
+                        '1 Business profile',
+                        'Bank Transfer Details',
+                        'Basic Income vs Expense',
+                        'Standard email support'
+                    ] as $feature)
+                    <li class="flex items-center gap-2 text-sm text-slate-300">
+                        <span class="text-teal-400">✓</span> {{ $feature }}
+                    </li>
+                    @endforeach
+                </ul>
+
+                @if($subPlan === 'starter')
                     <button disabled class="w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-500 font-semibold text-sm cursor-not-allowed">Current Plan</button>
                 @else
                     <button wire:click="confirmSubscription('starter')" class="w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 hover:opacity-90 font-semibold text-sm transition-all">
-                        {{ $currentLevel > 1 ? 'Downgrade to Starter' : 'Subscribe to Starter' }}
+                        {{ $currentLevel > 2 ? 'Downgrade to Starter' : 'Upgrade to Starter' }}
                     </button>
                 @endif
             </div>
@@ -106,8 +139,8 @@
                 @if($subPlan === 'pro')
                     <button disabled class="w-full text-center py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-bold shadow-lg opacity-50 cursor-not-allowed">Current Plan</button>
                 @else
-                    <button wire:click="confirmSubscription('pro')" class="{{ ($subPlan && $currentLevel > 2) ? 'w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 hover:opacity-90 font-semibold text-sm transition-all' : 'w-full text-center py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-bold shadow-lg hover:opacity-90 transition-all' }}">
-                        {{ $subPlan ? ($currentLevel > 2 ? 'Downgrade to Pro' : 'Upgrade to Pro') : ($currentLevel > 2 ? 'Subscribe to Pro' : 'Upgrade to Pro') }}
+                    <button wire:click="confirmSubscription('pro')" class="{{ ($subPlan && $currentLevel > 3) ? 'w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 hover:opacity-90 font-semibold text-sm transition-all' : 'w-full text-center py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-bold shadow-lg hover:opacity-90 transition-all' }}">
+                        {{ $subPlan ? ($currentLevel > 3 ? 'Downgrade to Pro' : 'Upgrade to Pro') : ($currentLevel > 3 ? 'Subscribe to Pro' : 'Upgrade to Pro') }}
                     </button>
                 @endif
             </div>
@@ -139,7 +172,7 @@
                     <button disabled class="w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-500 font-semibold text-sm cursor-not-allowed">Current Plan</button>
                 @else
                     <button wire:click="confirmSubscription('agency')" class="w-full text-center py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 hover:opacity-90 font-semibold text-sm transition-all">
-                        {{ $subPlan ? 'Upgrade to Agency' : ($currentLevel == 3 ? 'Subscribe to Agency' : 'Upgrade to Agency') }}
+                        {{ $subPlan ? 'Upgrade to Agency' : ($currentLevel == 4 ? 'Subscribe to Agency' : 'Upgrade to Agency') }}
                     </button>
                 @endif
             </div>

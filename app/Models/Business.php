@@ -13,10 +13,16 @@ class Business extends Model
         'user_id', 'name', 'email', 'phone', 'address', 'logo', 'plan',
         'primary_color', 'accent_color', 'tagline', 'invoice_footer',
         'font_family', 'show_tax', 'show_qty', 'show_notes', 'show_tagline', 'template_style',
+        'bank_name', 'account_name', 'account_number', 'routing_number',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function webhooks()
+    {
+        return $this->hasMany(Webhook::class);
     }
 }

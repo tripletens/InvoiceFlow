@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings/reminders', \App\Livewire\Settings\RemindersSettings::class)->name('settings.reminders');
     Route::get('/settings/branding', \App\Livewire\Settings\BrandingSettings::class)->name('settings.branding');
     Route::get('/settings/designer', \App\Livewire\Settings\InvoiceDesigner::class)->name('settings.designer');
+    Route::get('/settings/webhooks', \App\Livewire\Settings\WebhookManager::class)->name('settings.webhooks');
     Route::get('/upgrade', \App\Livewire\Subscriptions\SubscriptionManager::class)->name('upgrade');
     Route::get('/profile', \App\Livewire\Profile::class)->name('profile');
 });

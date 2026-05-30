@@ -69,7 +69,7 @@ class User extends Authenticatable
 
     public function hasAccess(): bool
     {
-        return true; // Free-forever Starter tier ensures all registered users have access
+        return true; // Free-forever tier ensures all registered users have access
     }
 
     public function currentPlan(): string
@@ -87,7 +87,7 @@ class User extends Authenticatable
             return 'agency'; // Trial users get full agency features for 14 days
         }
 
-        return 'starter';
+        return 'free';
     }
 
     public function canCreateInvoice(): bool
@@ -95,12 +95,14 @@ class User extends Authenticatable
         $plan = $this->currentPlan();
         if ($plan === 'pro' || $plan === 'agency') return true;
         
-        // Free Starter plan limit: 3 per month
         $countThisMonth = $this->invoices()
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
             
+        if ($plan === 'starter') return $countThisMonth < 25;
+            
+        // Free plan limit: 3 per month
         return $countThisMonth < 3;
     }
 
@@ -111,8 +113,9 @@ class User extends Authenticatable
 
         $count = $this->businesses()->count();
 
+        if ($plan === 'free') return $count < 1;
         if ($plan === 'starter') return $count < 1;
-        if ($plan === 'pro') return $count < 2; // Pro limit: 2 profiles
+        if ($plan === 'pro') return $count < 3; // Pro limit: 3 profiles
         
         return false;
     }
